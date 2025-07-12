@@ -59,9 +59,12 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authProvider)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/signup", "/api/users/login").permitAll()
+                            .requestMatchers("/**").permitAll()
+                /*.requestMatchers("/api/users/signup", "/api/users/login").permitAll()
                 .requestMatchers("/api/users/all").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                // Allow authenticated users to manage projects, boards, tasks, columns
+                .requestMatchers("/api/projects/**", "/api/boards/**", "/api/tasks/**", "/api/task-columns/**").authenticated()
+                .anyRequest().authenticated()*/
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

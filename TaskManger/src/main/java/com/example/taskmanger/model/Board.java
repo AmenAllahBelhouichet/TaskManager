@@ -1,4 +1,5 @@
 package com.example.taskmanger.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
+@JsonIgnoreProperties(value = {"columns", "project"}, allowSetters = true)
 public class Board {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

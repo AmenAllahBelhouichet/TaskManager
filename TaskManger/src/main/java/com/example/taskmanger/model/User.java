@@ -7,11 +7,12 @@ import jakarta.persistence.Id;
 import lombok.*;
 import jakarta.persistence.*;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+// import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"projects", "assignedTasks", "comments"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -26,15 +27,16 @@ public class User {
     private Roles role;
 
     @OneToMany(mappedBy = "owner")
-    @JsonIgnore
+    @JsonIgnoreProperties({"owner", "boards"})
+    // @JsonIgnore
     private List<Project> projects;
 
     @OneToMany(mappedBy = "assignTo")
-    @JsonIgnore
+    // @JsonIgnore
     private List<Task> assignedTasks;
 
     @OneToMany(mappedBy = "author")
-    @JsonIgnore
+    // @JsonIgnore
     private List<Comments> comments;
 
     }

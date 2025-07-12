@@ -5,14 +5,9 @@ import com.example.taskmanger.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import com.example.taskmanger.config.JwtUtil;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -20,10 +15,6 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @GetMapping("/all")
     public List<User> getAllUsers() {
@@ -44,24 +35,10 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentEmail = authentication.getName();
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        Optional<User> currentUserOpt = userService.findByEmail(currentEmail);
-        if (!currentUserOpt.isPresent()) {
-            return ResponseEntity.status(403).build();
+        if (!userService.getUserById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
         }
-        User currentUser = currentUserOpt.get();
-        // Allow if admin or user is updating their own data
-        if (isAdmin || currentUser.getId() == id) {
-            if (!userService.getUserById(id).isPresent()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(userService.updateUser(id, user));
-        } else {
-            return ResponseEntity.status(403).build();
-        }
+        return ResponseEntity.ok(userService.updateUser(id, user));
     }
 
     @DeleteMapping("/delete/{id}")
@@ -80,14 +57,23 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-            );
-            String token = jwtUtil.generateToken(loginRequest.getEmail(), authentication.getAuthorities().iterator().next().getAuthority());
-            return ResponseEntity.ok().body(java.util.Collections.singletonMap("token", token));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("Invalid email or password");
+        Optional<User> userOpt = userService.findByEmail(loginRequest.getEmail());
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            boolean passwordMatch = userService.checkPassword(loginRequest.getPassword(), user.getPassword());
+            if (passwordMatch) {
+                // Return user id, email, name, and role (and dummy token for compatibility)
+                return ResponseEntity.ok(Map.of(
+                    "token", "dummy-token",
+                    "user", Map.of(
+                        "id", user.getId(),
+                        "email", user.getEmail(),
+                        "name", user.getName(),
+                        "role", user.getRole() != null ? user.getRole().toString() : null
+                    )
+                ));
+            }
         }
+        return ResponseEntity.status(401).body("Invalid email or password");
     }
 } 

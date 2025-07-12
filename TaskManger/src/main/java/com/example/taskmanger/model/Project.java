@@ -6,10 +6,12 @@ import jakarta.persistence.Id;
 import lombok.*;
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"owner", "boards"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,6 +23,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonIgnoreProperties({"projects", "assignedTasks", "comments"})
     private User owner;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)

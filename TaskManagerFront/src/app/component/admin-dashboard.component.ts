@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 interface User {
   id: number;
@@ -17,7 +16,7 @@ interface User {
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HttpClientModule]
+  imports: [CommonModule, RouterModule, FormsModule]
 })
 export class AdminDashboardComponent implements OnInit {
   users: User[] = [];
@@ -35,7 +34,11 @@ export class AdminDashboardComponent implements OnInit {
   fetchUsers() {
     this.http.get<User[]>('http://localhost:8089/api/users/all').subscribe({
       next: users => this.users = users,
-      error: () => this.error = 'Failed to fetch users'
+      error: (err) => {
+        this.error = 'Failed to fetch users';
+        console.error('Failed to fetch users', err);
+        alert('Fetch users error: ' + JSON.stringify(err));
+      }
     });
   }
 

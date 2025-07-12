@@ -1,0 +1,112 @@
+.boards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.board-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 220px;
+  max-width: 240px;
+  width: 220px;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.board-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.board-image {
+  height: 90px;
+  background-size: cover;
+  background-position: center;
+}
+
+.board-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 12px 16px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.add-board {
+  background: #f4f4f4;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+}
+
+.add-board-content {
+  padding: 32px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.add-board-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.board-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.edit-btn, .delete-btn {
+  background: #fff;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 1.1em;
+  transition: background 0.2s;
+}
+.edit-btn:hover {
+  background: #e0e0e0;
+}
+.delete-btn:hover {
+  background: #ffeaea;
+  color: #c00;
+}
+
+.edit-board-modal-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+} 

@@ -33,4 +33,8 @@ public class BoardService {
     public void deleteBoard(int id) {
         boardRepository.deleteById(id);
     }
+
+    public List<Board> getBoardsByProjectId(int projectId) {
+        return boardRepository.findByProjectId(projectId);
+    }
 } 

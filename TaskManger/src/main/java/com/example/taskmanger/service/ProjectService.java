@@ -33,4 +33,8 @@ public class ProjectService {
     public void deleteProject(int id) {
         projectRepository.deleteById(id);
     }
+
+    public List<Project> getProjectsByOwnerId(int ownerId) {
+        return projectRepository.findByOwnerId(ownerId);
+    }
 } 

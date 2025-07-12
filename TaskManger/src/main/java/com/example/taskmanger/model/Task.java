@@ -1,5 +1,6 @@
 package com.example.taskmanger.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@JsonIgnoreProperties({"assignTo", "taskColumn", "comments"})
 public class Task {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

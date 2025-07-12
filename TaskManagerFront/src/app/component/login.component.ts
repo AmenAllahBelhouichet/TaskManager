@@ -20,18 +20,25 @@ export class LoginComponent {
 
   login() {
     this.authService.login({ email: this.email, password: this.password }).subscribe({
-      next: (res) => {
-        const token = res.token;
-        if (token) {
-          this.taskService.setToken(token);
-          this.error = null;
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          const role = payload.role || payload.authorities || payload.auth || payload['authority'] || '';
-          if (role === 'ADMIN' || (Array.isArray(role) && role.includes('ADMIN')) || (typeof role === 'string' && role.includes('ADMIN'))) {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
+      next: (response) => {
+        const token = response.token;
+        localStorage.setItem('jwtToken', token); // Store as 'jwtToken' for interceptor
+        let userIdMsg = '';
+        if (response.user && response.user.id) {
+          localStorage.setItem('userId', response.user.id.toString());
+          userIdMsg = `Logged in as user ID: ${response.user.id}`;
+          console.log(userIdMsg);
+        } else {
+          userIdMsg = 'Warning: No userId returned from backend!';
+          console.warn(userIdMsg);
+        }
+        this.error = null;
+        alert(userIdMsg); // Show userId or warning
+        // Role-based navigation
+        if (response.user && response.user.role && response.user.role.toUpperCase() === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (err) => {
