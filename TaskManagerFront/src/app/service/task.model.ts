@@ -6,5 +6,6 @@ export interface Task {
   columnId?: number;
   taskColumn?: { id: number };
   deadline?: Date;
+  assignTo?: { id: number };
   // Add other fields as needed based on your backend Task entity
 } 

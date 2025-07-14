@@ -7,6 +7,8 @@ import { Task } from '../service/task.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { User } from '../service/user.model';
+import { UserService } from '../service/user.service';
 
 @Component({
   selector: 'app-tasks-page',
@@ -25,17 +27,29 @@ export class TasksPageComponent implements OnInit {
   newTaskDeadline: { [columnId: number]: string } = {};
   editingColumn: TaskColumn | null = null;
   editingColumnName = '';
+  users: User[] = [];
+  editingTask: Task | null = null;
+  editingTaskTitle = '';
+  editingTaskDescription = '';
+  editingTaskDeadline = '';
+  editingTaskAssignToId: number | null = null;
+  showAddTaskModal: boolean = false;
+  addTaskColumn: TaskColumn | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private columnService: TaskColumnService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.boardId = Number(params.get('boardId'));
       this.loadColumnsAndTasks();
+    });
+    this.userService.getAllUsers().subscribe(users => {
+      this.users = users;
     });
   }
 
@@ -58,7 +72,19 @@ export class TasksPageComponent implements OnInit {
     });
   }
 
-  createTask(column: TaskColumn) {
+  openAddTaskModal(column: TaskColumn) {
+    this.addTaskColumn = column;
+    this.showAddTaskModal = true;
+  }
+
+  closeAddTaskModal() {
+    this.showAddTaskModal = false;
+    this.addTaskColumn = null;
+  }
+
+  createTaskFromModal() {
+    if (!this.addTaskColumn) return;
+    const column = this.addTaskColumn;
     const title = this.newTaskTitle[column.id];
     const description = this.newTaskDescription[column.id];
     const deadline = this.newTaskDeadline[column.id];
@@ -71,9 +97,8 @@ export class TasksPageComponent implements OnInit {
       deadline: deadline ? new Date(deadline) : undefined,
       taskColumn: { id: column.id }
     }).subscribe(task => {
-      this.newTaskTitle[column.id] = '';
-      this.newTaskDescription[column.id] = '';
-      this.newTaskDeadline[column.id] = '';
+      this.showAddTaskModal = false;
+      this.addTaskColumn = null;
       this.loadColumnsAndTasks();
     });
   }
@@ -123,5 +148,43 @@ export class TasksPageComponent implements OnInit {
     this.columnService.deleteColumn(columnId).subscribe(() => {
       this.loadColumnsAndTasks();
     });
+  }
+
+  startEditTask(task: Task) {
+    this.editingTask = { ...task };
+    this.editingTaskTitle = task.title;
+    this.editingTaskDescription = task.description;
+    this.editingTaskDeadline = task.deadline ? (typeof task.deadline === 'string' ? (task.deadline as string).substring(0, 10) : new Date(task.deadline as any).toISOString().substring(0, 10)) : '';
+    this.editingTaskAssignToId = task.assignTo?.id || null;
+  }
+
+  confirmEditTask() {
+    if (!this.editingTask) return;
+    const updatedTask: Task = {
+      ...this.editingTask,
+      title: this.editingTaskTitle,
+      description: this.editingTaskDescription,
+      deadline: this.editingTaskDeadline ? new Date(this.editingTaskDeadline) : undefined,
+      assignTo: this.editingTaskAssignToId ? { id: this.editingTaskAssignToId } : undefined
+    };
+    this.taskService.updateTask(updatedTask.id, updatedTask).subscribe(() => {
+      this.editingTask = null;
+      this.loadColumnsAndTasks();
+    });
+  }
+
+  cancelEditTask() {
+    this.editingTask = null;
+  }
+
+  deleteTask(task: Task) {
+    if (!confirm('Are you sure you want to delete this task?')) return;
+    this.taskService.deleteTask(task.id).subscribe(() => {
+      this.loadColumnsAndTasks();
+    });
+  }
+
+  get connectedDropListsIds(): string[] {
+    return this.columns.map(col => 'column-' + col.id);
   }
 } 

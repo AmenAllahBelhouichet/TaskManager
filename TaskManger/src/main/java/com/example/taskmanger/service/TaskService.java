@@ -1,6 +1,7 @@
 package com.example.taskmanger.service;
 
 import com.example.taskmanger.model.Task;
+import com.example.taskmanger.model.TaskColumn;
 import com.example.taskmanger.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,5 +37,15 @@ public class TaskService {
 
     public List<Task> getTasksByColumnId(int columnId) {
         return taskRepository.findByTaskColumn_Id(columnId);
+    }
+
+    public Task moveTaskToColumn(int taskId, TaskColumn newColumn) {
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if (taskOpt.isPresent()) {
+            Task task = taskOpt.get();
+            task.setTaskColumn(newColumn);
+            return taskRepository.save(task);
+        }
+        throw new IllegalArgumentException("Task not found");
     }
 } 

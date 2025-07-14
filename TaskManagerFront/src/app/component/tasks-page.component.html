@@ -10,19 +10,21 @@
     <div
       cdkDropList
       [cdkDropListData]="tasksByColumn[column.id] || []"
+      [cdkDropListConnectedTo]="connectedDropListsIds"
+      [id]="'column-' + column.id"
       class="task-list"
       (cdkDropListDropped)="drop($event, column)">
       <div *ngFor="let task of (tasksByColumn[column.id] || [])" cdkDrag class="task-card">
         <div class="task-title">{{ task.title }}</div>
         <div class="task-desc">{{ task.description }}</div>
+        <div class="task-deadline" *ngIf="task.deadline">Deadline: {{ task.deadline | date:'yyyy-MM-dd' }}</div>
+        <div class="task-assign" *ngIf="task.assignTo">Assigned to: {{ task.assignTo.id }}</div>
+        <button class="edit-btn" (click)="startEditTask(task)">✏️</button>
+        <button class="delete-btn" (click)="deleteTask(task)">🗑️</button>
       </div>
     </div>
-    <div class="add-task-form">
-      <input [(ngModel)]="newTaskTitle[column.id]" placeholder="Add a card…" />
-      <input [(ngModel)]="newTaskDescription[column.id]" placeholder="Description" />
-      <input type="date" [(ngModel)]="newTaskDeadline[column.id]" placeholder="Deadline" />
-      <button (click)="createTask(column)">Add</button>
-    </div>
+    <!-- Add Task Button -->
+    <button class="add-task-btn" (click)="openAddTaskModal(column)"><span style="font-size:1.1em;">➕</span> Add Task</button>
   </div>
   <div class="kanban-column add-column">
     <input [(ngModel)]="newColumnName" placeholder="Add column…" />
@@ -35,4 +37,45 @@
   <input [(ngModel)]="editingColumnName" placeholder="New column name" />
   <button (click)="confirmEditColumn()">Save</button>
   <button (click)="cancelEditColumn()">Cancel</button>
+</div>
+
+<!-- Edit Task Modal (centered) -->
+<div *ngIf="editingTask" class="edit-task-modal-centered">
+  <h3>Edit Task</h3>
+  <input [(ngModel)]="editingTaskTitle" placeholder="Title" />
+  <input [(ngModel)]="editingTaskDescription" placeholder="Description" />
+  <input type="date" [(ngModel)]="editingTaskDeadline" placeholder="Deadline" />
+  <select [(ngModel)]="editingTaskAssignToId">
+    <option [ngValue]="null">Unassigned</option>
+    <option *ngFor="let user of users" [ngValue]="user.id">{{ user.username || user.email }}</option>
+  </select>
+  <button (click)="confirmEditTask()">Save</button>
+  <button (click)="cancelEditTask()">Cancel</button>
+</div>
+
+<!-- Add Task Modal (centered) -->
+<div *ngIf="showAddTaskModal && addTaskColumn" class="add-task-modal-centered">
+  <h3>Add Task</h3>
+  <div class="add-task-fields">
+    <div class="title-input-group">
+      <label for="modal-title-{{addTaskColumn.id}}" class="title-label">
+        <span class="title-icon">📝</span> Title
+      </label>
+      <input id="modal-title-{{addTaskColumn.id}}" [(ngModel)]="newTaskTitle[addTaskColumn.id]" placeholder="Task title" />
+    </div>
+    <div class="desc-input-group">
+      <label for="modal-desc-{{addTaskColumn.id}}" class="desc-label">
+        <span class="desc-icon">💬</span> Description
+      </label>
+      <input id="modal-desc-{{addTaskColumn.id}}" [(ngModel)]="newTaskDescription[addTaskColumn.id]" placeholder="Description" />
+    </div>
+    <div class="deadline-input-group">
+      <label for="modal-deadline-{{addTaskColumn.id}}" class="deadline-label">
+        <span class="calendar-icon">📅</span> Deadline
+      </label>
+      <input id="modal-deadline-{{addTaskColumn.id}}" type="date" [(ngModel)]="newTaskDeadline[addTaskColumn.id]" placeholder="Deadline" />
+    </div>
+  </div>
+  <button (click)="createTaskFromModal()"><span style="font-size:1.1em;">➕</span> Add Task</button>
+  <button (click)="closeAddTaskModal()">Cancel</button>
 </div> 

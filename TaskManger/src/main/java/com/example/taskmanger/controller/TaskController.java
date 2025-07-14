@@ -1,6 +1,7 @@
 package com.example.taskmanger.controller;
 
 import com.example.taskmanger.model.Task;
+import com.example.taskmanger.model.TaskColumn;
 import com.example.taskmanger.repository.TaskColumnRepository;
 import com.example.taskmanger.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,21 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(taskService.updateTask(id, task));
+    }
+
+    @PutMapping("/move/{taskId}/to-column/{columnId}")
+    public ResponseEntity<Task> moveTaskToColumn(@PathVariable int taskId, @PathVariable int columnId) {
+        Optional<TaskColumn> columnOpt = taskColumnRepository.findById(columnId);
+        if (columnOpt.isPresent()) {
+            try {
+                Task updated = taskService.moveTaskToColumn(taskId, columnOpt.get());
+                return ResponseEntity.ok(updated);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/delete/{id}")

@@ -33,46 +33,93 @@
 }
 .task-card {
   background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.10);
-  padding: 12px 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+  padding: 16px 14px 12px 14px;
   margin-bottom: 4px;
   cursor: grab;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  border-left: 5px solid #0079bf;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.task-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border-color: #005fa3;
 }
 .task-title {
-  font-weight: 600;
-  font-size: 1em;
+  font-weight: 700;
+  font-size: 1.08em;
+  color: #222;
+  margin-bottom: 2px;
 }
 .task-desc {
-  font-size: 0.95em;
+  font-size: 0.97em;
   color: #555;
+  margin-bottom: 2px;
+}
+.task-deadline {
+  font-size: 0.93em;
+  color: #b06d00;
+  background: #fffbe6;
+  border-radius: 4px;
+  padding: 2px 8px;
+  display: inline-block;
+  margin-bottom: 2px;
+}
+.task-assign {
+  font-size: 0.93em;
+  color: #0079bf;
+  background: #e6f4ff;
+  border-radius: 4px;
+  padding: 2px 8px;
+  display: inline-block;
+  margin-bottom: 2px;
 }
 .add-task-form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 8px 8px 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.add-task-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .add-task-form input {
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
   font-size: 1em;
+  background: #fff;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.add-task-form input:focus {
+  border: 1.5px solid #0079bf;
+  outline: none;
+  box-shadow: 0 0 0 2px #e6f4ff;
 }
 .add-task-form button {
   align-self: flex-end;
-  margin-top: 2px;
-  padding: 4px 12px;
-  border-radius: 4px;
+  margin-top: 4px;
+  padding: 7px 18px;
+  border-radius: 5px;
   border: none;
   background: #0079bf;
   color: #fff;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1em;
   cursor: pointer;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .add-task-form button:hover {
   background: #005fa3;
@@ -115,17 +162,22 @@
 }
 
 .edit-btn, .delete-btn {
-  background: #fff;
+  background: #f4f4f4;
   border: none;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.10);
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 6px 8px;
   font-size: 1.1em;
-  transition: background 0.2s;
+  margin-right: 4px;
+  transition: background 0.2s, color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .edit-btn:hover {
-  background: #e0e0e0;
+  background: #e0f0ff;
+  color: #0079bf;
 }
 .delete-btn:hover {
   background: #ffeaea;
@@ -146,4 +198,160 @@
   flex-direction: column;
   gap: 12px;
   min-width: 220px;
+} 
+
+.edit-task-modal-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 32px 28px 24px 28px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 320px;
+  max-width: 95vw;
+}
+.edit-task-modal-centered h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.18em;
+  color: #0079bf;
+  text-align: center;
+}
+.edit-task-modal-centered input,
+.edit-task-modal-centered select {
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #bbb;
+  font-size: 1em;
+  margin-bottom: 4px;
+}
+.edit-task-modal-centered button {
+  padding: 7px 18px;
+  border-radius: 5px;
+  border: none;
+  font-weight: 600;
+  font-size: 1em;
+  margin-top: 6px;
+  margin-right: 8px;
+  background: #0079bf;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.edit-task-modal-centered button:last-child {
+  background: #eee;
+  color: #333;
+}
+.edit-task-modal-centered button:hover:not(:last-child) {
+  background: #005fa3;
+}
+.edit-task-modal-centered button:last-child:hover {
+  background: #e0e0e0;
+} 
+.deadline-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.deadline-label {
+  font-size: 0.97em;
+  color: #555;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+.calendar-icon {
+  font-size: 1.1em;
+  margin-right: 2px;
+} 
+.title-input-group, .desc-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+.title-label, .desc-label {
+  font-size: 0.97em;
+  color: #555;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+.title-icon, .desc-icon {
+  font-size: 1.1em;
+  margin-right: 2px;
+} 
+.add-task-btn {
+  background: #0079bf;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 7px 18px;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.add-task-btn:hover {
+  background: #005fa3;
+}
+.add-task-modal-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 32px 28px 24px 28px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 320px;
+  max-width: 95vw;
+}
+.add-task-modal-centered h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.18em;
+  color: #0079bf;
+  text-align: center;
+}
+.add-task-modal-centered button {
+  padding: 7px 18px;
+  border-radius: 5px;
+  border: none;
+  font-weight: 600;
+  font-size: 1em;
+  margin-top: 6px;
+  margin-right: 8px;
+  background: #0079bf;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: inline-block;
+}
+.add-task-modal-centered button:last-child {
+  background: #eee;
+  color: #333;
+}
+.add-task-modal-centered button:hover:not(:last-child) {
+  background: #005fa3;
+}
+.add-task-modal-centered button:last-child:hover {
+  background: #e0e0e0;
 } 
