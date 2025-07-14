@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { User } from '../service/user.model';
 import { UserService } from '../service/user.service';
+import { Comment } from '../service/comments.model';
+import { CommentsService } from '../service/comments.service';
 
 @Component({
   selector: 'app-tasks-page',
@@ -35,12 +37,20 @@ export class TasksPageComponent implements OnInit {
   editingTaskAssignToId: number | null = null;
   showAddTaskModal: boolean = false;
   addTaskColumn: TaskColumn | null = null;
+  consultingTask: Task | null = null;
+  showConsultTaskModal: boolean = false;
+  comments: Comment[] = [];
+  newCommentContent: string = '';
+  editingCommentId: number | null = null;
+  editingCommentContent: string = '';
+  currentUserId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private columnService: TaskColumnService,
     private taskService: TaskService,
-    private userService: UserService
+    private userService: UserService,
+    private commentsService: CommentsService
   ) {}
 
   ngOnInit() {
@@ -51,6 +61,16 @@ export class TasksPageComponent implements OnInit {
     this.userService.getAllUsers().subscribe(users => {
       this.users = users;
     });
+    // Set currentUserId from localStorage
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUserId = user.id;
+      } catch (e) {
+        this.currentUserId = null;
+      }
+    }
   }
 
   loadColumnsAndTasks() {
@@ -181,6 +201,73 @@ export class TasksPageComponent implements OnInit {
     if (!confirm('Are you sure you want to delete this task?')) return;
     this.taskService.deleteTask(task.id).subscribe(() => {
       this.loadColumnsAndTasks();
+    });
+  }
+
+  onTaskDoubleClick(task: Task) {
+    this.consultingTask = task;
+    this.showConsultTaskModal = true;
+    this.fetchCommentsForTask(task.id);
+  }
+
+  closeConsultTaskModal() {
+    this.showConsultTaskModal = false;
+    this.consultingTask = null;
+    this.comments = [];
+    this.newCommentContent = '';
+    this.editingCommentId = null;
+    this.editingCommentContent = '';
+  }
+
+  fetchCommentsForTask(taskId: number) {
+    this.commentsService.getAllComments().subscribe(comments => {
+      this.comments = comments.filter(c => c.task && c.task.id === taskId);
+    });
+  }
+
+  addComment() {
+    if (!this.consultingTask || !this.newCommentContent.trim() || !this.currentUserId) return;
+    const comment: Comment = {
+      id: 0,
+      content: this.newCommentContent,
+      author: { id: this.currentUserId },
+      task: { id: this.consultingTask.id }
+    };
+    this.commentsService.createComment(comment).subscribe({
+      next: () => {
+        this.newCommentContent = '';
+        this.fetchCommentsForTask(this.consultingTask!.id);
+      },
+      error: err => {
+        alert('Failed to add comment: ' + (err.error || err.message));
+      }
+    });
+  }
+
+  startEditComment(comment: Comment) {
+    this.editingCommentId = comment.id;
+    this.editingCommentContent = comment.content;
+  }
+
+  confirmEditComment(comment: Comment) {
+    if (!this.editingCommentContent.trim()) return;
+    const updated: Comment = { ...comment, content: this.editingCommentContent };
+    this.commentsService.updateComment(comment.id, updated).subscribe(() => {
+      this.editingCommentId = null;
+      this.editingCommentContent = '';
+      this.fetchCommentsForTask(this.consultingTask!.id);
+    });
+  }
+
+  cancelEditComment() {
+    this.editingCommentId = null;
+    this.editingCommentContent = '';
+  }
+
+  deleteComment(comment: Comment) {
+    if (!confirm('Delete this comment?')) return;
+    this.commentsService.deleteComment(comment.id).subscribe(() => {
+      this.fetchCommentsForTask(this.consultingTask!.id);
     });
   }
 

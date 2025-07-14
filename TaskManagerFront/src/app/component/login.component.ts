@@ -26,6 +26,7 @@ export class LoginComponent {
         let userIdMsg = '';
         if (response.user && response.user.id) {
           localStorage.setItem('userId', response.user.id.toString());
+          localStorage.setItem('user', JSON.stringify(response.user)); // Store full user object
           userIdMsg = `Logged in as user ID: ${response.user.id}`;
           console.log(userIdMsg);
         } else {

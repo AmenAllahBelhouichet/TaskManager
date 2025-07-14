@@ -24,10 +24,12 @@ public class Comments {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"projects", "assignedTasks", "comments", "password", "role", "email", "name"})
     private User author;
 
     @ManyToOne
     @JoinColumn(name = "task_id")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"assignTo", "comments", "taskColumn", "status", "description", "deadline", "title"})
     private Task task;
 
     private Date createdDate;

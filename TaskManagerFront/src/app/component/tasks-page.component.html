@@ -14,7 +14,7 @@
       [id]="'column-' + column.id"
       class="task-list"
       (cdkDropListDropped)="drop($event, column)">
-      <div *ngFor="let task of (tasksByColumn[column.id] || [])" cdkDrag class="task-card">
+      <div *ngFor="let task of (tasksByColumn[column.id] || [])" cdkDrag class="task-card" (dblclick)="onTaskDoubleClick(task)">
         <div class="task-title">{{ task.title }}</div>
         <div class="task-desc">{{ task.description }}</div>
         <div class="task-deadline" *ngIf="task.deadline">Deadline: {{ task.deadline | date:'yyyy-MM-dd' }}</div>
@@ -78,4 +78,36 @@
   </div>
   <button (click)="createTaskFromModal()"><span style="font-size:1.1em;">➕</span> Add Task</button>
   <button (click)="closeAddTaskModal()">Cancel</button>
+</div>
+
+<!-- Consult Task Modal (centered) -->
+<div *ngIf="showConsultTaskModal && consultingTask" class="consult-task-modal-centered">
+  <h3>Task Details</h3>
+  <div class="consult-task-details">
+    <div><strong>Title:</strong> {{ consultingTask.title }}</div>
+    <div><strong>Description:</strong> {{ consultingTask.description }}</div>
+    <div *ngIf="consultingTask.deadline"><strong>Deadline:</strong> {{ consultingTask.deadline | date:'yyyy-MM-dd' }}</div>
+    <div *ngIf="consultingTask.assignTo"><strong>Assigned to:</strong> {{ consultingTask.assignTo.id }}</div>
+  </div>
+  <h4>Comments</h4>
+  <div class="comments-list">
+    <div *ngFor="let comment of comments" class="comment-item">
+      <div class="comment-author">{{ comment.author?.email || 'User ' + comment.author?.id }}</div>
+      <div *ngIf="editingCommentId !== comment.id" class="comment-content">{{ comment.content }}</div>
+      <div *ngIf="editingCommentId === comment.id" class="comment-edit-form">
+        <input [(ngModel)]="editingCommentContent" />
+        <button (click)="confirmEditComment(comment)">Save</button>
+        <button (click)="cancelEditComment()">Cancel</button>
+      </div>
+      <div class="comment-actions" *ngIf="comment.author?.id === currentUserId && editingCommentId !== comment.id">
+        <button (click)="startEditComment(comment)">Edit</button>
+        <button (click)="deleteComment(comment)">Delete</button>
+      </div>
+    </div>
+  </div>
+  <div class="add-comment-form">
+    <input [(ngModel)]="newCommentContent" placeholder="Add a comment..." />
+    <button (click)="addComment()">Add</button>
+  </div>
+  <button (click)="closeConsultTaskModal()">Close</button>
 </div> 
