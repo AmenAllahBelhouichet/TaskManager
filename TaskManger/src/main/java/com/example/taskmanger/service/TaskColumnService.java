@@ -33,4 +33,8 @@ public class TaskColumnService {
     public void deleteTaskColumn(int id) {
         taskColumnRepository.deleteById(id);
     }
+
+    public List<TaskColumn> getColumnsByBoard(int boardId) {
+        return taskColumnRepository.findByBoardId(boardId);
+    }
 } 

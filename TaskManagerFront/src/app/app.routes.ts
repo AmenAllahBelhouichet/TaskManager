@@ -4,6 +4,7 @@ import { DashboardComponent } from './component/dashboard/dashboard.component';
 import { SignupComponent } from './component/signup.component';
 import { AdminDashboardComponent } from './component/admin-dashboard.component';
 import { BoardsPageComponent } from './component/boards-page.component';
+import { TasksPageComponent } from './component/tasks-page.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'admin', component: AdminDashboardComponent },
   { path: 'boards/:projectId', component: BoardsPageComponent },
+  { path: 'tasks/:boardId', component: TasksPageComponent },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];

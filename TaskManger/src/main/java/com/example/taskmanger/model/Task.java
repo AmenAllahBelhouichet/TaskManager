@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@JsonIgnoreProperties({"assignTo", "taskColumn", "comments"})
+@JsonIgnoreProperties({"assignTo", "comments"})
 public class Task {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

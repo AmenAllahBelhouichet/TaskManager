@@ -1,6 +1,6 @@
 <div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">👤</span>Personal Boards</div>
 <div class="boards-grid">
-  <div *ngFor="let board of boards" class="board-card" style="position: relative;">
+  <div *ngFor="let board of boards" class="board-card" [routerLink]="['/tasks', board.id]" style="position: relative;">
     <div class="board-image" [ngStyle]="{ 'background-image': 'url(https://picsum.photos/400/200?random=' + board.id + ')' }"></div>
     <div class="board-title">{{ board.name }}</div>
     <div class="board-actions">

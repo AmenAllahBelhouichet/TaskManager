@@ -1,0 +1,38 @@
+<div class="kanban-board">
+  <div *ngFor="let column of columns" class="kanban-column">
+    <div class="column-header">
+      <h3>{{ column.name }}</h3>
+      <div class="column-actions">
+        <button class="edit-btn" (click)="startEditColumn(column)">✏️</button>
+        <button class="delete-btn" (click)="deleteColumn(column.id)">🗑️</button>
+      </div>
+    </div>
+    <div
+      cdkDropList
+      [cdkDropListData]="tasksByColumn[column.id] || []"
+      class="task-list"
+      (cdkDropListDropped)="drop($event, column)">
+      <div *ngFor="let task of (tasksByColumn[column.id] || [])" cdkDrag class="task-card">
+        <div class="task-title">{{ task.title }}</div>
+        <div class="task-desc">{{ task.description }}</div>
+      </div>
+    </div>
+    <div class="add-task-form">
+      <input [(ngModel)]="newTaskTitle[column.id]" placeholder="Add a card…" />
+      <input [(ngModel)]="newTaskDescription[column.id]" placeholder="Description" />
+      <input type="date" [(ngModel)]="newTaskDeadline[column.id]" placeholder="Deadline" />
+      <button (click)="createTask(column)">Add</button>
+    </div>
+  </div>
+  <div class="kanban-column add-column">
+    <input [(ngModel)]="newColumnName" placeholder="Add column…" />
+    <button (click)="createColumn()">Add</button>
+  </div>
+</div>
+
+<!-- Edit Column Modal (centered) -->
+<div *ngIf="editingColumn" class="edit-column-modal-centered">
+  <input [(ngModel)]="editingColumnName" placeholder="New column name" />
+  <button (click)="confirmEditColumn()">Save</button>
+  <button (click)="cancelEditColumn()">Cancel</button>
+</div> 

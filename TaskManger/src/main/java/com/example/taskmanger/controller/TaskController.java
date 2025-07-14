@@ -1,6 +1,7 @@
 package com.example.taskmanger.controller;
 
 import com.example.taskmanger.model.Task;
+import com.example.taskmanger.repository.TaskColumnRepository;
 import com.example.taskmanger.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,9 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private TaskColumnRepository taskColumnRepository;
+
     @GetMapping("/all")
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
@@ -27,8 +31,23 @@ public class TaskController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/by-column/{columnId}")
+    public List<Task> getTasksByColumn(@PathVariable int columnId) {
+        return taskService.getTasksByColumnId(columnId);
+    }
+
     @PostMapping("/add")
     public Task createTask(@RequestBody Task task) {
+        if (task.getTaskColumn() != null && task.getTaskColumn().getId() != 0) {
+            var columnOpt = taskColumnRepository.findById(task.getTaskColumn().getId());
+            if (columnOpt.isPresent()) {
+                task.setTaskColumn(columnOpt.get());
+            } else {
+                throw new IllegalArgumentException("TaskColumn with id " + task.getTaskColumn().getId() + " not found");
+            }
+        } else {
+            throw new IllegalArgumentException("TaskColumn id must be provided");
+        }
         return taskService.createTask(task);
     }
 

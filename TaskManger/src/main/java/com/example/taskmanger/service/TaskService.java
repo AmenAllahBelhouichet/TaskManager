@@ -33,4 +33,8 @@ public class TaskService {
     public void deleteTask(int id) {
         taskRepository.deleteById(id);
     }
+
+    public List<Task> getTasksByColumnId(int columnId) {
+        return taskRepository.findByTaskColumn_Id(columnId);
+    }
 } 

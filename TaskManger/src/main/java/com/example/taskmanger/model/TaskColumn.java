@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@JsonIgnoreProperties({"board", "tasks"})
+@JsonIgnoreProperties(value = {"board", "tasks"}, allowSetters = true)
 public class TaskColumn {
 
     @Id

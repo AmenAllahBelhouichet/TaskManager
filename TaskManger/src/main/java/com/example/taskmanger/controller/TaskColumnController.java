@@ -1,6 +1,8 @@
 package com.example.taskmanger.controller;
 
+import com.example.taskmanger.model.Board;
 import com.example.taskmanger.model.TaskColumn;
+import com.example.taskmanger.repository.BoardRepository;
 import com.example.taskmanger.service.TaskColumnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class TaskColumnController {
     @Autowired
     private TaskColumnService taskColumnService;
 
+    @Autowired
+    private BoardRepository boardRepository;
+
     @GetMapping("/all")
     public List<TaskColumn> getAllTaskColumns() {
         return taskColumnService.getAllTaskColumns();
@@ -27,8 +32,19 @@ public class TaskColumnController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/by-board/{boardId}")
+    public List<TaskColumn> getColumnsByBoard(@PathVariable int boardId) {
+        return taskColumnService.getColumnsByBoard(boardId);
+    }
+
     @PostMapping("/add")
     public TaskColumn createTaskColumn(@RequestBody TaskColumn taskColumn) {
+        if (taskColumn.getBoard() != null && taskColumn.getBoard().getId() != 0) {
+            Board board = boardRepository.findById(taskColumn.getBoard().getId()).orElse(null);
+            taskColumn.setBoard(board);
+        } else {
+            taskColumn.setBoard(null);
+        }
         return taskColumnService.createTaskColumn(taskColumn);
     }
 
