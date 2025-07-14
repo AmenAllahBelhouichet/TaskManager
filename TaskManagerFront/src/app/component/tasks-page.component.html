@@ -92,7 +92,12 @@
   <h4>Comments</h4>
   <div class="comments-list">
     <div *ngFor="let comment of comments" class="comment-item">
-      <div class="comment-author">{{ comment.author?.email || 'User ' + comment.author?.id }}</div>
+      <div class="comment-author" style="font-weight: 600; color: #007bff; margin-bottom: 0.25rem;">
+        {{ comment.author?.email || 'Unknown User' }}
+        <span *ngIf="comment.createdDate" style="font-weight: 400; color: #888; font-size: 0.95em; margin-left: 8px;">
+          &middot; {{ comment.createdDate | date:'yyyy-MM-dd HH:mm' }}
+        </span>
+      </div>
       <div *ngIf="editingCommentId !== comment.id" class="comment-content">{{ comment.content }}</div>
       <div *ngIf="editingCommentId === comment.id" class="comment-edit-form">
         <input [(ngModel)]="editingCommentContent" />
