@@ -4,12 +4,15 @@ import com.example.taskmanger.model.Project;
 import com.example.taskmanger.model.User;
 import com.example.taskmanger.service.ProjectService;
 import com.example.taskmanger.service.UserService;
+import com.example.taskmanger.repository.ProjectMemberRepository;
+import com.example.taskmanger.model.ProjectMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -18,6 +21,8 @@ public class ProjectController {
     private ProjectService projectService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProjectMemberRepository projectMemberRepository;
 
     @GetMapping("/all")
     public List<Project> getAllProjects() {
@@ -37,6 +42,12 @@ public class ProjectController {
         List<Project> projects = projectService.getProjectsByOwnerId(ownerId);
         System.out.println("Found projects: " + projects);
         return projects;
+    }
+
+    @GetMapping("/user-member/{userId}")
+    public List<Project> getProjectsByMember(@PathVariable int userId) {
+        List<ProjectMember> memberships = projectMemberRepository.findByUserIdAndAcceptedTrue(userId);
+        return memberships.stream().map(ProjectMember::getProject).collect(Collectors.toList());
     }
 
     @PostMapping("/add")
