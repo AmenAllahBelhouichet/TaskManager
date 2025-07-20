@@ -7,11 +7,13 @@ import { BoardsPageComponent } from './component/boards-page.component';
 import { TasksPageComponent } from './component/tasks-page.component';
 import { AiAgentManagementComponent } from './component/ai-agent-management.component';
 import { AdminLayoutComponent } from './component/admin-layout.component';
+import { AcceptInviteComponent } from './component/accept-invite.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'accept-invite', component: AcceptInviteComponent },
   {
     path: 'admin',
     component: AdminLayoutComponent,

@@ -11,13 +11,15 @@ import { User } from '../service/user.model';
 import { UserService } from '../service/user.service';
 import { Comment } from '../service/comments.model';
 import { CommentsService } from '../service/comments.service';
-
+import { NavbarComponent } from './navbar.component';
+import { ProjectService } from '../service/project.service';
+import { BoardService } from '../service/board.service';
 @Component({
   selector: 'app-tasks-page',
   templateUrl: './tasks-page.component.html',
   styleUrls: ['./tasks-page.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule]
+  imports: [CommonModule, FormsModule, DragDropModule, NavbarComponent]
 })
 export class TasksPageComponent implements OnInit {
   boardId: number = 0;
@@ -50,13 +52,42 @@ export class TasksPageComponent implements OnInit {
     private columnService: TaskColumnService,
     private taskService: TaskService,
     private userService: UserService,
-    private commentsService: CommentsService
+    private commentsService: CommentsService,
+    private boardService: BoardService,
+    private projectService: ProjectService
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.boardId = Number(params.get('boardId'));
       this.loadColumnsAndTasks();
+      // Fetch board to get projectId, then fetch team members
+      this.teamMembersLoading = true;
+      this.boardService.getBoardById(this.boardId).subscribe(board => {
+        const projectId = board.project?.id;
+        if (projectId) {
+          this.projectService.getTeamMembersByProjectId(projectId).subscribe({
+            next: members => {
+              this.teamMembers = members.map((m: any) => ({
+                name: m.user?.name,
+                email: m.user?.email,
+                role: m.teamRole
+              }));
+              this.teamMembersLoading = false;
+            },
+            error: () => {
+              this.teamMembers = [];
+              this.teamMembersLoading = false;
+            }
+          });
+        } else {
+          this.teamMembers = [];
+          this.teamMembersLoading = false;
+        }
+      }, () => {
+        this.teamMembers = [];
+        this.teamMembersLoading = false;
+      });
     });
     this.userService.getAllUsers().subscribe(users => {
       this.users = users;
@@ -72,7 +103,9 @@ export class TasksPageComponent implements OnInit {
       }
     }
   }
-
+  teamMembers: { name: string; email: string; role: string }[] = [];
+  teamMembersLoading = false;
+  showTeamMembersBtn = false;
   loadColumnsAndTasks() {
     this.columnService.getColumnsByBoard(this.boardId).subscribe(columns => {
       this.columns = columns;

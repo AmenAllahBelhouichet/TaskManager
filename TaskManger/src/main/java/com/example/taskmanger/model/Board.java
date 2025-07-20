@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@JsonIgnoreProperties(value = {"columns", "project"}, allowSetters = true)
+@JsonIgnoreProperties(value = {"columns"}, allowSetters = true)
 public class Board {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -22,6 +22,7 @@ public class Board {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"boards"})
     private Project project;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)

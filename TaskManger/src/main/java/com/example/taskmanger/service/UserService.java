@@ -31,7 +31,17 @@ public class UserService {
     }
 
     public User updateUser(int id, User user) {
+        Optional<User> existingOpt = userRepository.findById(id);
+        if (existingOpt.isEmpty()) return null;
+        User existing = existingOpt.get();
         user.setId(id);
+        // Only hash and update password if a new one is provided
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            user.setPassword(existing.getPassword());
+        }
+        if (user.getRole() == null) user.setRole(existing.getRole());
         return userRepository.save(user);
     }
 

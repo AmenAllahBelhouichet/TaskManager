@@ -24,4 +24,5 @@ public class ProjectMember {
 
     private String inviteToken;
     private boolean accepted = false;
+    private java.util.Date inviteCreatedAt;
 } 

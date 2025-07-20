@@ -1,0 +1,9 @@
+<div class="accept-invite-bg" style="min-height: 100vh; background: linear-gradient(135deg, #e0f7fa 0%, #f8f9fa 100%); display: flex; align-items: center; justify-content: center;">
+  <div class="accept-invite-container" style="max-width: 400px; margin: 3rem auto; padding: 2.5rem 2rem; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.09); text-align: center;">
+    <div style="font-size: 2.5rem; color: #28a745; margin-bottom: 1rem;" *ngIf="message">✔️</div>
+    <h2 style="margin-bottom: 1.5rem; color: #007bff;">Project Invitation</h2>
+    <div *ngIf="message" style="color: #28a745; font-weight: 600; font-size: 1.2em; margin-bottom: 1.5rem;">You accepted the Invitation</div>
+    <div *ngIf="error" style="color: #dc3545; font-weight: 600; font-size: 1.1em; margin-bottom: 1.5rem;">{{ error }}</div>
+    <button *ngIf="message" routerLink="/dashboard" style="background: #007bff; color: #fff; border: none; border-radius: 6px; padding: 0.7em 2em; font-size: 1em; cursor: pointer; margin-top: 1em;">Go to Dashboard</button>
+  </div>
+</div> 

@@ -13,13 +13,14 @@ import { Project } from '../../service/project.model';
 import { ProjectService } from '../../service/project.service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { NavbarComponent } from '../navbar.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [CommonModule, DragDropModule, FormsModule, RouterModule]
+  imports: [CommonModule, DragDropModule, FormsModule, RouterModule, NavbarComponent]
 })
 export class DashboardComponent implements OnInit {
   projects: Project[] = [];
@@ -40,6 +41,58 @@ export class DashboardComponent implements OnInit {
   showAddProject = false;
   editingProject: Project | null = null;
   editingProjectName = '';
+
+  inviteEmail = '';
+  showInviteModal = false;
+  inviteProject: Project | null = null;
+  inviteMessage = '';
+
+  openInviteModal(project: Project) {
+    this.inviteProject = project;
+    this.inviteEmail = '';
+    this.inviteMessage = '';
+    this.showInviteModal = true;
+  }
+
+  closeInviteModal() {
+    this.showInviteModal = false;
+    this.inviteProject = null;
+    this.inviteEmail = '';
+    this.inviteMessage = '';
+  }
+
+  sendInvite() {
+    if (!this.inviteProject || !this.inviteEmail) return;
+    fetch('http://localhost:8089/api/project-members/invite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        projectId: this.inviteProject.id,
+        email: this.inviteEmail,
+        role: 'INVITED'
+      })
+    })
+      .then(async res => {
+        if (res.ok) {
+          this.inviteMessage = 'Invitation sent!';
+        } else {
+          const err = await res.text();
+          this.inviteMessage = err || 'Failed to send invite.';
+        }
+      })
+      .catch(() => {
+        this.inviteMessage = 'Failed to send invite.';
+      });
+  }
+
+  currentUserId = Number(localStorage.getItem('userId'));
+
+  isOwner(project: Project): boolean {
+    return !!(project.owner && project.owner.id === this.currentUserId);
+  }
+
+  teamMembers: { name: string; email: string; role: string }[] = [];
+  showTeamMembersBtn = false;
 
   constructor(
     private projectService: ProjectService,
@@ -66,24 +119,42 @@ export class DashboardComponent implements OnInit {
       return;
     }
     this.userIdWarning = '';
-    this.projectService.getProjectsByOwnerId(Number(userId)).subscribe(projects => {
-      this.projects = projects;
-      if (!this.selectedProject && projects.length) {
-        this.selectProject(projects[0]);
-      }
-      if (!projects.length) {
-        this.selectedProject = null;
-        this.boards = [];
-        this.selectedBoard = null;
-        this.columns = [];
-        this.tasksByColumn = {};
-      }
+    // Fetch both owned and member projects
+    this.projectService.getProjectsByOwnerId(Number(userId)).subscribe(ownedProjects => {
+      this.projectService.getProjectsByMemberId(Number(userId)).subscribe(memberProjects => {
+        // Merge and deduplicate by project id
+        const all = [...ownedProjects, ...memberProjects];
+        const unique = all.filter((proj, idx, arr) => arr.findIndex(p => p.id === proj.id) === idx);
+        this.projects = unique;
+        if (!this.selectedProject && unique.length) {
+          this.selectProject(unique[0]);
+        }
+        if (!unique.length) {
+          this.selectedProject = null;
+          this.boards = [];
+          this.selectedBoard = null;
+          this.columns = [];
+          this.tasksByColumn = {};
+        }
+      });
     });
   }
 
   selectProject(project: Project) {
     this.selectedProject = project;
     this.loadBoards();
+    this.showTeamMembersBtn = !!project;
+    if (project) {
+      this.projectService.getTeamMembersByProjectId(project.id).subscribe(members => {
+        this.teamMembers = members.map((m: any) => ({
+          name: m.user?.name,
+          email: m.user?.email,
+          role: m.teamRole
+        }));
+      });
+    } else {
+      this.teamMembers = [];
+    }
   }
 
   createProject() {

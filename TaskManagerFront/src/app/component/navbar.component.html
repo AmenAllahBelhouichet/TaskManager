@@ -1,0 +1,60 @@
+<nav class="navbar">
+  <div class="navbar-left">
+    <a class="navbar-logo" routerLink="/dashboard">TaskManager</a>
+    <a class="navbar-link" routerLink="/dashboard">Projects</a>
+  </div>
+  <div class="navbar-right">
+    <button *ngIf="showTeamMembers" class="team-btn" (click)="openTeamModal()">Team Members</button>
+    <div class="profile-menu-wrapper">
+      <div class="profile-icon" tabindex="0" (click)="toggleProfileMenu()" aria-label="Profile menu">
+        <img src="https://ui-avatars.com/api/?name={{user.name || user.email}}&background=007bff&color=fff" alt="Profile" />
+      </div>
+      <div class="profile-dropdown" *ngIf="showProfileMenu">
+        <button (click)="openEditProfile()">Edit Profile</button>
+        <button (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="modal-bg" *ngIf="showEditProfileModal">
+    <div class="modal-card">
+      <h3>Edit Profile</h3>
+      <input [(ngModel)]="editName" placeholder="Name" />
+      <input [(ngModel)]="editEmail" placeholder="Email" type="email" />
+      <input [(ngModel)]="editPassword" placeholder="New Password (optional)" type="password" />
+      <div *ngIf="editError" class="modal-error">{{ editError }}</div>
+      <div *ngIf="editSuccess" class="modal-success">{{ editSuccess }}</div>
+      <div class="modal-actions">
+        <button (click)="saveProfile()">Save</button>
+        <button (click)="showEditProfileModal=false">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Members Modal -->
+  <div class="modal-bg" *ngIf="showTeamModal">
+    <div class="modal-card">
+      <h3>Team Members</h3>
+      <div *ngIf="teamMembersLoading" style="margin: 1.5em 0;">Loading team members...</div>
+      <ng-container *ngIf="!teamMembersLoading">
+        <ng-container *ngIf="teamMembers.length > 0; else noMembers">
+          <ng-container *ngFor="let member of teamMembers">
+            <div class="team-member-row" *ngIf="member.role !== 'INVITED' || isOwner">
+              <span class="team-member-name">{{ member.name || member.email }}</span>
+              <span *ngIf="member.role === 'OWNER'" class="team-member-role owner-role">👑 Owner</span>
+              <span *ngIf="member.role === 'MEMBER'" class="team-member-role member-role">🤝 Member</span>
+              <span *ngIf="member.role === 'INVITED' && isOwner" class="team-member-role invited-role">⏳ Invited</span>
+            </div>
+          </ng-container>
+        </ng-container>
+        <ng-template #noMembers>
+          <div style="margin: 1.5em 0; color: #888;">No team members found for this project.</div>
+        </ng-template>
+      </ng-container>
+      <div class="modal-actions">
+        <button (click)="closeTeamModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</nav> 

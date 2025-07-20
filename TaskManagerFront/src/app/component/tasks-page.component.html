@@ -1,3 +1,7 @@
+<app-navbar [showTeamMembers]="true" [teamMembers]="teamMembers" [teamMembersLoading]="teamMembersLoading"></app-navbar>
+<h3>Tasks</h3><br><br> 
+<div class="dashboard-main-content">
+<div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">📌</span>Tasks</div>
 <div class="kanban-board">
   <div *ngFor="let column of columns" class="kanban-column">
     <div class="column-header">
@@ -26,7 +30,7 @@
     <!-- Add Task Button -->
     <button class="add-task-btn" (click)="openAddTaskModal(column)"><span style="font-size:1.1em;">➕</span> Add Task</button>
   </div>
-  <div class="kanban-column add-column">
+  <div class="kanban-column add-column add-column-hover">
     <input [(ngModel)]="newColumnName" placeholder="Add column…" />
     <button (click)="createColumn()">Add</button>
   </div>

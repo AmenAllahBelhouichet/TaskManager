@@ -1,3 +1,11 @@
+<app-navbar [showTeamMembers]="true" [teamMembers]="teamMembers" [teamMembersLoading]="teamMembersLoading"></app-navbar>
+<div class="dashboard-main-content">
+  <h3>My Boards</h3>
+  <br>
+  <br>
+
+ 
+
 <div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">👤</span>Personal Boards</div>
 <div class="boards-grid">
   <div *ngFor="let board of boards" class="board-card" [routerLink]="['/tasks', board.id]" style="position: relative;">
@@ -8,20 +16,33 @@
       <button class="delete-btn" (click)="deleteBoard(board.id)">🗑️</button>
     </div>
   </div>
-  <div class="board-card add-board" (click)="showAddBoard = true">
+  <div class="board-card add-board add-board-hover" (click)="showAddBoard = true">
     <div class="add-board-content">Create new board…</div>
   </div>
 </div>
 
-<!-- Edit Board Modal (centered) -->
+<!-- Edit Board Modal (centered, modern design) -->
 <div *ngIf="editingBoard" class="edit-board-modal-centered">
-  <input [(ngModel)]="editingBoardName" placeholder="New board name" />
-  <button (click)="confirmEditBoard()">Save</button>
-  <button (click)="cancelEditBoard()">Cancel</button>
+  <h3 style="color: #0079bf; text-align: center; margin-bottom: 12px;">Edit Board</h3>
+  <div class="title-input-group">
+    <label for="edit-board-title" class="title-label">
+      <span class="title-icon">📝</span> Title
+    </label>
+    <input id="edit-board-title" [(ngModel)]="editingBoardName" placeholder="Board name" />
+  </div>
+  <button style="margin-top: 10px;" (click)="confirmEditBoard()"><span style="font-size:1.1em;">💾</span> Save</button>
+  <button style="background: #eee; color: #333; margin-top: 6px;" (click)="cancelEditBoard()">Cancel</button>
 </div>
 
+<!-- Add Board Modal (centered, modern design) -->
 <div *ngIf="showAddBoard" class="add-board-modal">
-  <input [(ngModel)]="newBoardName" placeholder="Board name" />
-  <button (click)="createBoard()">Add Board</button>
-  <button (click)="showAddBoard = false">Cancel</button>
+  <h3 style="color: #0079bf; text-align: center; margin-bottom: 12px;">Add Board</h3>
+  <div class="title-input-group">
+    <label for="add-board-title" class="title-label">
+      <span class="title-icon">📝</span> Title
+    </label>
+    <input id="add-board-title" [(ngModel)]="newBoardName" placeholder="Board name" />
+  </div>
+  <button style="margin-top: 10px;" (click)="createBoard()"><span style="font-size:1.1em;">➕</span> Add Board</button>
+  <button style="background: #eee; color: #333; margin-top: 6px;" (click)="showAddBoard = false">Cancel</button>
 </div> 

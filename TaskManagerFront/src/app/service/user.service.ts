@@ -12,4 +12,8 @@ export class UserService {
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/all`);
   }
+
+  updateUser(id: number, user: any) {
+    return this.http.put(`http://localhost:8089/api/users/update/${id}`, user);
+  }
 } 

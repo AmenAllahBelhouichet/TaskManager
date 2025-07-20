@@ -1,37 +1,72 @@
-
-
-<h2>My Projects</h2>
+<app-navbar></app-navbar>
+<div class="dashboard-main-content">
 <br>
-<br>
+<div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">🚀</span>Projects</div>
+
 
 <div *ngIf="userIdWarning" style="color: red; font-weight: bold; margin-bottom: 16px;">
   {{ userIdWarning }}
 </div>
 
 <div class="project-cards" style="display: flex; flex-wrap: wrap; gap: 16px; min-height: 100px;">
-  <div *ngFor="let project of projects" class="project-card" [routerLink]="['/boards', project.id]" style="cursor: pointer; background: #f4f4f4; padding: 16px; border-radius: 8px; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative;">
+  <div *ngFor="let project of projects" 
+       class="project-card"
+       [ngClass]="{'owner-card': isOwner(project), 'member-card': !isOwner(project)}"
+       [routerLink]="['/boards', project.id]"
+       style="cursor: pointer; background: #f4f4f4; padding: 16px; border-radius: 8px; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative;">
     <div class="project-image" [ngStyle]="{ 'background-image': 'url(https://picsum.photos/400/200?random=' + project.id + ')' }"></div>
-    <h3>{{ project.name }}</h3>
+    <h3>
+      {{ project.name }}
+      <span *ngIf="isOwner(project)" class="badge badge-owner" title="You are the owner">👑 Owner</span>
+      <span *ngIf="!isOwner(project)" class="badge badge-member" title="Shared with you">🤝 Member</span>
+    </h3>
     <div *ngIf="project.owner">Owner: {{ project.owner.username || project.owner.email }}</div>
     <div class="project-actions">
-      <button class="edit-btn" (click)="$event.stopPropagation(); startEditProject(project)">✏️</button>
-      <button class="delete-btn" (click)="$event.stopPropagation(); deleteProject(project.id)">🗑️</button>
+      <button class="edit-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); startEditProject(project)">✏️</button>
+      <button class="delete-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); deleteProject(project.id)">🗑️</button>
+      <button class="invite-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); openInviteModal(project)" title="Invite by Email" style="margin-left: 4px;">📧</button>
     </div>
   </div>
-  <div class="project-card add-project" (click)="showAddProject = true" style="background: #f4f4f4; color: #888; display: flex; align-items: center; justify-content: center; font-style: italic;">
+  <div class="project-card add-project add-project-hover" (click)="showAddProject = true">
     <div class="add-project-content">Create new project…</div>
   </div>
 </div>
 
-<!-- Edit Project Modal (centered, like add project) -->
+<!-- Edit Project Modal (centered, modern design) -->
 <div *ngIf="editingProject" class="edit-project-modal-centered">
-  <input [(ngModel)]="editingProjectName" placeholder="New project name" />
-  <button (click)="confirmEditProject()">Save</button>
-  <button (click)="cancelEditProject()">Cancel</button>
+  <h3 style="color: #0079bf; text-align: center; margin-bottom: 12px;">Edit Project</h3>
+  <div class="title-input-group">
+    <label for="edit-project-title" class="title-label">
+      <span class="title-icon">📝</span> Title
+    </label>
+    <input id="edit-project-title" [(ngModel)]="editingProjectName" placeholder="Project name" />
+  </div>
+  <button style="margin-top: 10px;" (click)="confirmEditProject()"><span style="font-size:1.1em;">💾</span> Save</button>
+  <button style="background: #eee; color: #333; margin-top: 6px;" (click)="cancelEditProject()">Cancel</button>
 </div>
 
+<!-- Add Project Modal (centered, modern design) -->
 <div *ngIf="showAddProject" class="add-project-modal">
-  <input [(ngModel)]="newProjectName" placeholder="Project name" />
-  <button (click)="createProject()">Add Project</button>
-  <button (click)="showAddProject = false">Cancel</button>
+  <h3 style="color: #0079bf; text-align: center; margin-bottom: 12px;">Add Project</h3>
+  <div class="title-input-group">
+    <label for="add-project-title" class="title-label">
+      <span class="title-icon">📝</span> Title
+    </label>
+    <input id="add-project-title" [(ngModel)]="newProjectName" placeholder="Project name" />
+  </div>
+  <button style="margin-top: 10px;" (click)="createProject()"><span style="font-size:1.1em;">➕</span> Add Project</button>
+  <button style="background: #eee; color: #333; margin-top: 6px;" (click)="showAddProject = false">Cancel</button>
+</div>
+
+<div *ngIf="showInviteModal" class="invite-modal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+  <div style="background: #fff; padding: 2rem; border-radius: 8px; min-width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+    <h3>Invite to Project: {{ inviteProject?.name }}</h3>
+    <input [(ngModel)]="inviteEmail" placeholder="Enter email" style="width: 100%; margin-bottom: 1rem; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc;" />
+    <div style="display: flex; gap: 0.5rem;">
+      <button (click)="sendInvite()" style="background: #007bff; color: #fff; border: none; border-radius: 4px; padding: 0.5rem 1rem;">Send Invite</button>
+      <button (click)="closeInviteModal()" style="background: #eee; color: #333; border: none; border-radius: 4px; padding: 0.5rem 1rem;">Cancel</button>
+    </div>
+    <div *ngIf="inviteMessage" style="margin-top: 1em; color: #007bff;">{{ inviteMessage }}</div>
+  </div>
+</div>
 </div>

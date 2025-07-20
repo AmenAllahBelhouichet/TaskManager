@@ -5,13 +5,16 @@ import { Board } from '../service/board.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { NavbarComponent } from './navbar.component';
+import { ProjectService } from '../service/project.service';
+
 
 @Component({
   selector: 'app-boards-page',
   templateUrl: './boards-page.component.html',
   styleUrls: ['./boards-page.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule]
+  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent]
 })
 export class BoardsPageComponent implements OnInit {
   boards: Board[] = [];
@@ -21,13 +24,29 @@ export class BoardsPageComponent implements OnInit {
   editingBoard: Board | null = null;
   editingBoardName = '';
 
-  constructor(private route: ActivatedRoute, private boardService: BoardService) {}
+  constructor(private route: ActivatedRoute, private boardService: BoardService, private projectService: ProjectService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.projectId = Number(params.get('projectId'));
       console.log('Loaded BoardsPageComponent for projectId:', this.projectId);
       this.loadBoards();
+      // Fetch team members for this project
+      this.teamMembersLoading = true;
+      this.projectService.getTeamMembersByProjectId(this.projectId).subscribe({
+        next: members => {
+          this.teamMembers = members.map((m: any) => ({
+            name: m.user?.name,
+            email: m.user?.email,
+            role: m.teamRole
+          }));
+          this.teamMembersLoading = false;
+        },
+        error: () => {
+          this.teamMembers = [];
+          this.teamMembersLoading = false;
+        }
+      });
     });
   }
 
@@ -73,7 +92,9 @@ export class BoardsPageComponent implements OnInit {
     this.editingBoard = null;
     this.editingBoardName = '';
   }
-
+  teamMembers: { name: string; email: string; role: string }[] = [];
+  teamMembersLoading = false;
+  showTeamMembersBtn = false;
   deleteBoard(boardId: number) {
     if (!confirm('Are you sure you want to delete this board?')) return;
     this.boardService.deleteBoard(boardId).subscribe(() => {

@@ -49,6 +49,11 @@ public class ProjectMemberController {
         }
     }
 
+    @GetMapping("/by-project/{projectId}")
+    public ResponseEntity<?> getMembersByProject(@PathVariable Integer projectId) {
+        return ResponseEntity.ok(projectMemberService.getMembersByProject(projectId));
+    }
+
     // Use Mailgun's free API for sending emails
     private void sendInviteEmail(String toEmail, String token) {
         String inviteLink = " http://localhost:4200/accept-invite?token=" + token;

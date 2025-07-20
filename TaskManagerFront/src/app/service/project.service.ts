@@ -32,4 +32,12 @@ export class ProjectService {
   getProjectsByOwnerId(ownerId: number): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.apiUrl}/user/${ownerId}`);
   }
+
+  getProjectsByMemberId(userId: number): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.apiUrl}/user-member/${userId}`);
+  }
+
+  getTeamMembersByProjectId(projectId: number) {
+    return this.http.get<any[]>(`http://localhost:8089/api/project-members/by-project/${projectId}`);
+  }
 } 
