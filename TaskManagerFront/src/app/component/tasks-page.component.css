@@ -499,3 +499,33 @@
   background: #eaf6ff;
   color: #007bff;
 } 
+.task-meta-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.task-meta-row .task-deadline,
+.task-meta-row .task-assign {
+  background: #f6faff;
+  color: #0079bf;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.93em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.meta-icon {
+  font-size: 1.08em;
+  margin-right: 3px;
+}
+.task-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 4px;
+  border-top: 1px solid #f0f0f0;
+} 

@@ -11,6 +11,7 @@
       <div class="mb-3">
         <input type="password" [(ngModel)]="password" name="password" class="form-control" placeholder="Password" required />
       </div>
+      <div>Password value: {{ password }}</div>
       <button type="submit" class="btn btn-success w-100">Sign Up</button>
     </form>
     <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>

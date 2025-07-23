@@ -57,6 +57,9 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
+        if (loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("Password cannot be empty");
+        }
         Optional<User> userOpt = userService.findByEmail(loginRequest.getEmail());
         if (userOpt.isPresent()) {
             User user = userOpt.get();

@@ -46,6 +46,7 @@ export class TasksPageComponent implements OnInit {
   editingCommentId: number | null = null;
   editingCommentContent: string = '';
   currentUserId: number | null = null;
+  newTaskAssignToId: { [columnId: number]: number | null } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -69,6 +70,7 @@ export class TasksPageComponent implements OnInit {
           this.projectService.getTeamMembersByProjectId(projectId).subscribe({
             next: members => {
               this.teamMembers = members.map((m: any) => ({
+                id: m.user?.id,
                 name: m.user?.name,
                 email: m.user?.email,
                 role: m.teamRole
@@ -103,7 +105,7 @@ export class TasksPageComponent implements OnInit {
       }
     }
   }
-  teamMembers: { name: string; email: string; role: string }[] = [];
+  teamMembers: { id: number; name: string; email: string; role: string }[] = [];
   teamMembersLoading = false;
   showTeamMembersBtn = false;
   loadColumnsAndTasks() {
@@ -141,6 +143,7 @@ export class TasksPageComponent implements OnInit {
     const title = this.newTaskTitle[column.id];
     const description = this.newTaskDescription[column.id];
     const deadline = this.newTaskDeadline[column.id];
+    const assignToId = this.newTaskAssignToId[column.id];
     if (!title || !title.trim()) return;
     this.taskService.createTask({
       id: 0,
@@ -148,7 +151,8 @@ export class TasksPageComponent implements OnInit {
       description,
       status: column.name,
       deadline: deadline ? new Date(deadline) : undefined,
-      taskColumn: { id: column.id }
+      taskColumn: { id: column.id },
+      assignTo: assignToId ? ({ id: assignToId } as User) : undefined
     }).subscribe(task => {
       this.showAddTaskModal = false;
       this.addTaskColumn = null;
@@ -218,7 +222,7 @@ export class TasksPageComponent implements OnInit {
       title: this.editingTaskTitle,
       description: this.editingTaskDescription,
       deadline: this.editingTaskDeadline ? new Date(this.editingTaskDeadline) : undefined,
-      assignTo: this.editingTaskAssignToId ? { id: this.editingTaskAssignToId } : undefined
+      assignTo: this.editingTaskAssignToId ? ({ id: this.editingTaskAssignToId } as User) : undefined
     };
     this.taskService.updateTask(updatedTask.id, updatedTask).subscribe(() => {
       this.editingTask = null;
@@ -306,5 +310,9 @@ export class TasksPageComponent implements OnInit {
 
   get connectedDropListsIds(): string[] {
     return this.columns.map(col => 'column-' + col.id);
+  }
+
+  get assignableMembers() {
+    return this.teamMembers.filter(m => m.role === 'MEMBER');
   }
 } 

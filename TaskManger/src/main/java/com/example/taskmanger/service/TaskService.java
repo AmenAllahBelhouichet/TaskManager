@@ -3,6 +3,7 @@ package com.example.taskmanger.service;
 import com.example.taskmanger.model.Task;
 import com.example.taskmanger.model.TaskColumn;
 import com.example.taskmanger.repository.TaskRepository;
+import com.example.taskmanger.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class TaskService {
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
@@ -23,11 +26,23 @@ public class TaskService {
     }
 
     public Task createTask(Task task) {
+        // Set assignTo to the correct User entity if id is provided
+        if (task.getAssignTo() != null && task.getAssignTo().getId() != 0) {
+            userRepository.findById(task.getAssignTo().getId()).ifPresent(task::setAssignTo);
+        } else {
+            task.setAssignTo(null);
+        }
         return taskRepository.save(task);
     }
 
     public Task updateTask(int id, Task task) {
         task.setId(id);
+        // Set assignTo to the correct User entity if id is provided
+        if (task.getAssignTo() != null && task.getAssignTo().getId() != 0) {
+            userRepository.findById(task.getAssignTo().getId()).ifPresent(task::setAssignTo);
+        } else {
+            task.setAssignTo(null);
+        }
         return taskRepository.save(task);
     }
 

@@ -19,12 +19,20 @@
       class="task-list"
       (cdkDropListDropped)="drop($event, column)">
       <div *ngFor="let task of (tasksByColumn[column.id] || [])" cdkDrag class="task-card" (dblclick)="onTaskDoubleClick(task)">
+        <div class="task-assign" *ngIf="task.assignTo">
+          <span class="meta-icon">👤</span> {{ task.assignTo.email || task.assignTo.id }}
+        </div>
         <div class="task-title">{{ task.title }}</div>
         <div class="task-desc">{{ task.description }}</div>
-        <div class="task-deadline" *ngIf="task.deadline">Deadline: {{ task.deadline | date:'yyyy-MM-dd' }}</div>
-        <div class="task-assign" *ngIf="task.assignTo">Assigned to: {{ task.assignTo.id }}</div>
-        <button class="edit-btn" (click)="startEditTask(task)">✏️</button>
-        <button class="delete-btn" (click)="deleteTask(task)">🗑️</button>
+        <div class="task-meta-row">
+          <div class="task-deadline" *ngIf="task.deadline">
+            <span class="meta-icon">📅</span> {{ task.deadline | date:'yyyy-MM-dd' }}
+          </div>
+        </div>
+        <div class="task-actions-row">
+          <button class="edit-btn" (click)="startEditTask(task)"><span class="meta-icon">✏️</span></button>
+          <button class="delete-btn" (click)="deleteTask(task)"><span class="meta-icon">🗑️</span></button>
+        </div>
       </div>
     </div>
     <!-- Add Task Button -->
@@ -51,7 +59,7 @@
   <input type="date" [(ngModel)]="editingTaskDeadline" placeholder="Deadline" />
   <select [(ngModel)]="editingTaskAssignToId">
     <option [ngValue]="null">Unassigned</option>
-    <option *ngFor="let user of users" [ngValue]="user.id">{{ user.username || user.email }}</option>
+    <option *ngFor="let member of assignableMembers" [ngValue]="member.id">{{ member.name || member.email }}</option>
   </select>
   <button (click)="confirmEditTask()">Save</button>
   <button (click)="cancelEditTask()">Cancel</button>
@@ -79,6 +87,15 @@
       </label>
       <input id="modal-deadline-{{addTaskColumn.id}}" type="date" [(ngModel)]="newTaskDeadline[addTaskColumn.id]" placeholder="Deadline" />
     </div>
+    <div class="assign-input-group">
+      <label for="modal-assign-{{addTaskColumn.id}}" class="assign-label">
+        <span class="assign-icon">👤</span> Assign To
+      </label>
+      <select id="modal-assign-{{addTaskColumn.id}}" [(ngModel)]="newTaskAssignToId[addTaskColumn.id]">
+        <option [ngValue]="null">Unassigned</option>
+        <option *ngFor="let member of assignableMembers" [ngValue]="member.id">{{ member.name || member.email }}</option>
+      </select>
+    </div>
   </div>
   <button (click)="createTaskFromModal()"><span style="font-size:1.1em;">➕</span> Add Task</button>
   <button (click)="closeAddTaskModal()">Cancel</button>
@@ -91,7 +108,7 @@
     <div><strong>Title:</strong> {{ consultingTask.title }}</div>
     <div><strong>Description:</strong> {{ consultingTask.description }}</div>
     <div *ngIf="consultingTask.deadline"><strong>Deadline:</strong> {{ consultingTask.deadline | date:'yyyy-MM-dd' }}</div>
-    <div *ngIf="consultingTask.assignTo"><strong>Assigned to:</strong> {{ consultingTask.assignTo.id }}</div>
+    <div *ngIf="consultingTask.assignTo"><strong>Assigned to:</strong> {{ consultingTask.assignTo.email || consultingTask.assignTo.id }}</div>
   </div>
   <h4>Comments</h4>
   <div class="comments-list">

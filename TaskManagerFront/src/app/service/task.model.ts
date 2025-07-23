@@ -1,3 +1,5 @@
+import { User } from './user.model';
+
 export interface Task {
   id: number;
   title: string;
@@ -6,6 +8,6 @@ export interface Task {
   columnId?: number;
   taskColumn?: { id: number };
   deadline?: Date;
-  assignTo?: { id: number };
+  assignTo?: User;
   // Add other fields as needed based on your backend Task entity
 } 

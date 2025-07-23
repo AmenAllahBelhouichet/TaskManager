@@ -25,6 +25,9 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (user.getRole() == null) user.setRole(Roles.user);
         return userRepository.save(user);
@@ -54,6 +57,9 @@ public class UserService {
     }
 
     public boolean checkPassword(String rawPassword, String encodedPassword) {
+        if (rawPassword == null || rawPassword.isEmpty() || encodedPassword == null || encodedPassword.isEmpty()) {
+            return false;
+        }
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 } 

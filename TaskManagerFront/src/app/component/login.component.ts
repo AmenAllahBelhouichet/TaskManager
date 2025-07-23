@@ -19,6 +19,10 @@ export class LoginComponent {
   constructor(private authService: AuthService, private taskService: TaskService, private router: Router) {}
 
   login() {
+    if (!this.password || !this.password.trim()) {
+      this.error = 'Password is required.';
+      return;
+    }
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         const token = response.token;
