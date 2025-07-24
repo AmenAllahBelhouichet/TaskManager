@@ -1,4 +1,4 @@
-<app-navbar [showTeamMembers]="true" [teamMembers]="teamMembers" [teamMembersLoading]="teamMembersLoading"></app-navbar>
+<app-navbar [showTeamMembers]="true" [teamMembers]="teamMembers" [teamMembersLoading]="teamMembersLoading" (aiActionCompleted)="refreshTasks()"></app-navbar>
 <h3>Tasks</h3><br><br> 
 <div class="dashboard-main-content">
 <div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">📌</span>Tasks</div>

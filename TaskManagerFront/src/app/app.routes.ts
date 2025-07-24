@@ -5,7 +5,6 @@ import { SignupComponent } from './component/signup.component';
 import { AdminDashboardComponent } from './component/admin-dashboard.component';
 import { BoardsPageComponent } from './component/boards-page.component';
 import { TasksPageComponent } from './component/tasks-page.component';
-import { AiAgentManagementComponent } from './component/ai-agent-management.component';
 import { AdminLayoutComponent } from './component/admin-layout.component';
 import { AcceptInviteComponent } from './component/accept-invite.component';
 
@@ -18,8 +17,7 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
-      { path: '', component: AdminDashboardComponent },
-      { path: 'ai-agents', component: AiAgentManagementComponent }
+      { path: '', component: AdminDashboardComponent }
     ]
   },
   { path: 'boards/:projectId', component: BoardsPageComponent },

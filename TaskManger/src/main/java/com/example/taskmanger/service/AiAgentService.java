@@ -1,36 +1,40 @@
 package com.example.taskmanger.service;
 
-import com.example.taskmanger.model.AiAgent;
-import com.example.taskmanger.repository.AiAgentRepository;
+import com.example.taskmanger.model.Task;
+import com.example.taskmanger.model.TaskColumn;
+import com.example.taskmanger.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
+
+// Add import for registry and handler
+import com.example.taskmanger.service.AiAgentRegistry;
+import com.example.taskmanger.service.AIAgentHandler;
 
 @Service
 public class AiAgentService {
     @Autowired
-    private AiAgentRepository aiAgentRepository;
+    private TaskService taskService;
+    @Autowired
+    private TaskColumnService taskColumnService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AiAgentRegistry aiAgentRegistry;
 
-    public List<AiAgent> getAllAiAgents() {
-        return aiAgentRepository.findAll();
-    }
-
-    public Optional<AiAgent> getAiAgentById(int id) {
-        return aiAgentRepository.findById(id);
-    }
-
-    public AiAgent createAiAgent(AiAgent aiAgent) {
-        return aiAgentRepository.save(aiAgent);
-    }
-
-    public AiAgent updateAiAgent(int id, AiAgent aiAgent) {
-        aiAgent.setId(id);
-        return aiAgentRepository.save(aiAgent);
-    }
-
-    public void deleteAiAgent(int id) {
-        aiAgentRepository.deleteById(id);
+    // Executes a prompt for an AI agent (now just routes to the handler)
+    public String executePrompt(String intent, String targetEntity) {
+        String result;
+        if (intent != null) {
+            AIAgentHandler handler = aiAgentRegistry.getHandlerForAction(intent);
+            if (handler != null) {
+                result = handler.handle(targetEntity);
+            } else {
+                result = "No handler found for intent: " + intent;
+            }
+        } else {
+            result = "No intent provided";
+        }
+        return result;
     }
 } 

@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../service/user.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-navbar',
@@ -19,6 +20,10 @@ export class NavbarComponent {
   showProfileMenu = false;
   showEditProfileModal = false;
   showTeamModal = false;
+  showAIPromptModal = false;
+  aiPromptText = '';
+  aiPromptResult = '';
+  aiPromptError = '';
 
   user = JSON.parse(localStorage.getItem('user') || '{}');
   editName = this.user.name || '';
@@ -27,7 +32,9 @@ export class NavbarComponent {
   editError = '';
   editSuccess = '';
 
-  constructor(private router: Router, private userService: UserService) {}
+  @Output() aiActionCompleted = new EventEmitter<void>();
+
+  constructor(private router: Router, private userService: UserService, private http: HttpClient) {}
 
   toggleProfileMenu() {
     this.showProfileMenu = !this.showProfileMenu;
@@ -81,6 +88,34 @@ export class NavbarComponent {
   }
   closeTeamModal() {
     this.showTeamModal = false;
+  }
+
+  openAIPromptModal() {
+    this.showAIPromptModal = true;
+    this.aiPromptText = '';
+    this.aiPromptResult = '';
+    this.aiPromptError = '';
+  }
+
+  submitAIPrompt() {
+    this.aiPromptError = '';
+    this.aiPromptResult = '';
+    if (!this.aiPromptText.trim()) {
+      this.aiPromptError = 'Prompt cannot be empty.';
+      return;
+    }
+    // Send the prompt text to the backend natural prompt endpoint
+    this.http.post('http://localhost:8089/api/ai-agents/execute-natural-prompt', { promptText: this.aiPromptText }, { responseType: 'text' })
+      .subscribe({
+        next: (result) => {
+          this.aiPromptResult = result;
+          this.showAIPromptModal = false;
+          this.aiActionCompleted.emit(); // Notify parent to refresh data
+        },
+        error: (err) => {
+          this.aiPromptError = 'Failed to execute prompt: ' + (err.error || err.message);
+        }
+      });
   }
 
   get isOwner(): boolean {

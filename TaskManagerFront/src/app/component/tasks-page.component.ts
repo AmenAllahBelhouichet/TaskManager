@@ -315,4 +315,8 @@ export class TasksPageComponent implements OnInit {
   get assignableMembers() {
     return this.teamMembers.filter(m => m.role === 'MEMBER');
   }
+
+  refreshTasks() {
+    this.loadColumnsAndTasks();
+  }
 } 

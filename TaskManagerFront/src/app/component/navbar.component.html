@@ -5,6 +5,9 @@
   </div>
   <div class="navbar-right">
     <button *ngIf="showTeamMembers" class="team-btn" (click)="openTeamModal()">Team Members</button>
+    <button class="ai-btn robot-btn" (click)="openAIPromptModal()" title="AI Assistant" aria-label="AI Assistant">
+      <span style="font-size: 1.4em; vertical-align: middle;">🤖</span>
+    </button>
     <div class="profile-menu-wrapper">
       <div class="profile-icon" tabindex="0" (click)="toggleProfileMenu()" aria-label="Profile menu">
         <img src="https://ui-avatars.com/api/?name={{user.name || user.email}}&background=007bff&color=fff" alt="Profile" />
@@ -54,6 +57,20 @@
       </ng-container>
       <div class="modal-actions">
         <button (click)="closeTeamModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Prompt Modal -->
+  <div class="modal-bg" *ngIf="showAIPromptModal">
+    <div class="modal-card">
+      <h3>AI Agent Prompt</h3>
+      <textarea [(ngModel)]="aiPromptText" placeholder="Enter your prompt here..." rows="4" style="width:100%"></textarea>
+      <div *ngIf="aiPromptResult" class="modal-success">{{ aiPromptResult }}</div>
+      <div *ngIf="aiPromptError" class="modal-error">{{ aiPromptError }}</div>
+      <div class="modal-actions">
+        <button (click)="submitAIPrompt()">Send</button>
+        <button (click)="showAIPromptModal=false">Cancel</button>
       </div>
     </div>
   </div>
