@@ -1,17 +1,71 @@
-<div class="d-flex min-vh-100">
+<!-- SB Admin 2 Style Sidebar and Layout -->
+<div class="d-flex" id="wrapper">
   <!-- Sidebar -->
-  <div class="bg-dark text-white p-4" style="width: 220px; min-height: 100vh;">
-    <h4 class="mb-4">Admin Panel</h4>
-    <ul class="nav flex-column mb-4">
-      <li class="nav-item mb-2">
-        <a class="nav-link text-white" routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">User Management</a>
-      </li>
+  <div class="bg-primary position-fixed" id="sidebar-wrapper" style="min-height: 100vh; width: 220px; z-index: 1040;">
+    <div class="sidebar-heading text-white d-flex align-items-center justify-content-center py-4">
+      <div class="d-flex flex-column align-items-center">
+        <div class="logo-container mb-2">
+        </div>
+        <span style="font-size: 1.1em; font-weight: bold; color: #fff;">Admin Panel</span>
+      </div>
+    </div>
+    <div class="list-group list-group-flush">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="list-group-item list-group-item-action bg-primary text-white border-0">
+        <i class="fas fa-fw fa-tachometer-alt mr-2"></i> User Management
+      </a>
       <!-- AI Agent Management link removed -->
-    </ul>
-    <button class="btn btn-danger w-100 mt-auto" (click)="logout()">Logout</button>
+    </div>
   </div>
-  <!-- Main Content -->
-  <div class="flex-grow-1 p-4">
-    <router-outlet></router-outlet>
+  <!-- /#sidebar-wrapper -->
+  <!-- Page Content -->
+  <div id="page-content-wrapper" class="flex-grow-1" style="background: #f8f9fc; min-height: 100vh; margin-left: 220px;">
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow" style="height: 60px;">
+      <button class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+      </button>
+      <span class="navbar-brand mb-0 h1"></span>
+      <div class="d-flex align-items-center ml-auto" style="margin-left:auto;">
+        <ul class="navbar-nav flex-row align-items-center" style="margin-left:auto;">
+          <li class="nav-item dropdown no-arrow" [class.show]="showDropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" (click)="toggleDropdown($event)" id="userDropdown" role="button" aria-haspopup="true" [attr.aria-expanded]="showDropdown">
+              <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ getUserEmail() }}</span>
+              <img class="img-profile rounded-circle" src="https://ui-avatars.com/api/?name=Admin&background=007bff&color=fff" style="width: 32px; height: 32px;" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" [class.show]="showDropdown" aria-labelledby="userDropdown">
+              <div class="dropdown-item-text text-gray-700 small" style="font-weight: 500;">{{ getUserEmail() }}</div>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" (click)="openEditProfile()">
+                <i class="fas fa-user-edit fa-sm fa-fw mr-2 text-gray-400"></i>
+                Edit Profile
+              </button>
+              <button class="dropdown-item text-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                Logout
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Main Content -->
+    <div class="container-fluid p-4">
+      <router-outlet></router-outlet>
+    </div>
   </div>
+  <!-- Admin Edit Profile Modal using shared modal -->
+  <app-shared-modal [open]="showEditProfileModal" (onClose)="showEditProfileModal=false">
+    <h3 style="margin-bottom: 1.5rem;">Edit Profile</h3>
+    <div style="display: flex; flex-direction: column; gap: 1.1em; margin-bottom: 1.2em;">
+      <input [(ngModel)]="editName" placeholder="Name" />
+      <input [(ngModel)]="editEmail" placeholder="Email" type="email" />
+      <input [(ngModel)]="editPassword" placeholder="New Password (optional)" type="password" />
+    </div>
+    <div *ngIf="editError" class="modal-error">{{ editError }}</div>
+    <div *ngIf="editSuccess" class="modal-success">{{ editSuccess }}</div>
+    <div class="modal-actions">
+      <button class="primary-btn" (click)="saveProfile()">Save</button>
+      <button class="secondary-btn" (click)="showEditProfileModal=false">Cancel</button>
+    </div>
+  </app-shared-modal>
 </div> 

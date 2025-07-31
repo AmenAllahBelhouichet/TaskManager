@@ -1,7 +1,21 @@
+/* Boards page container with border */
+.boards-page-container {
+  min-height: 100vh;
+  background: #f8f9fc;
+  border: 2px solid #e3e6f0;
+  border-radius: 12px;
+  margin: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
 .boards-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .board-card {

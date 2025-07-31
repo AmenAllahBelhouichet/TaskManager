@@ -1,3 +1,14 @@
+/* Dashboard page container with border */
+.dashboard-page-container {
+  min-height: 100vh;
+  background: #f8f9fc;
+  border: 2px solid #e3e6f0;
+  border-radius: 12px;
+  margin: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
 body, .dashboard-main-content {
   margin-top: 70px;
 }

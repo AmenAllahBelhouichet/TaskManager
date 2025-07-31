@@ -22,7 +22,7 @@ public class AssignTaskAgentHandler implements AIAgentHandler {
             // Format: assign_task:taskId:userId
             String[] parts = targetEntity.split(":");
             int taskId = Integer.parseInt(parts[1]);
-            
+
             int userId = Integer.parseInt(parts[2]);
             Task task = taskService.getTaskById(taskId).orElseThrow();
             task.setAssignTo(userService.getUserById(userId).orElse(null));

@@ -1,0 +1,76 @@
+.modal-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal-card {
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  min-width: 480px;
+  max-width: 95vw;
+  text-align: center;
+}
+.modal-card input {
+  width: 100%;
+  margin: 0.9em 0;
+  padding: 1.1em;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1.15em;
+  background: #fafbfc;
+  transition: border 0.2s;
+}
+.modal-card input:focus {
+  border: 1.5px solid #007bff;
+  outline: none;
+  background: #fff;
+}
+.modal-actions {
+  display: flex;
+  gap: 1.5em;
+  justify-content: center;
+  margin-top: 2em;
+}
+.primary-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9em 2.5em;
+  font-size: 1.15em;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 0.5em;
+  font-weight: 500;
+}
+.primary-btn:hover {
+  background: #0056b3;
+}
+.secondary-btn {
+  background: #f3f4f6;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9em 2.5em;
+  font-size: 1.15em;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+.secondary-btn:hover {
+  background: #e5e7eb;
+}
+.modal-error {
+  color: #dc3545;
+  margin-top: 0.5em;
+}
+.modal-success {
+  color: #28a745;
+  margin-top: 0.5em;
+} 

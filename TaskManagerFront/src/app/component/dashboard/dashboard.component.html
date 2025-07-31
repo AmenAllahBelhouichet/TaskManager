@@ -1,34 +1,37 @@
 <app-navbar></app-navbar>
-<div class="dashboard-main-content">
-<br>
-<div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">🚀</span>Projects</div>
 
+<div class="dashboard-page-container">
+  <div class="dashboard-main-content">
+    <br>
+    <div style="margin-bottom: 16px; font-size: 1.2em; font-weight: 500;"><span style="margin-right: 8px;">🚀</span>Projects</div>
 
-<div *ngIf="userIdWarning" style="color: red; font-weight: bold; margin-bottom: 16px;">
-  {{ userIdWarning }}
-</div>
-
-<div class="project-cards" style="display: flex; flex-wrap: wrap; gap: 16px; min-height: 100px;">
-  <div *ngFor="let project of projects" 
-       class="project-card"
-       [ngClass]="{'owner-card': isOwner(project), 'member-card': !isOwner(project)}"
-       [routerLink]="['/boards', project.id]"
-       style="cursor: pointer; background: #f4f4f4; padding: 16px; border-radius: 8px; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative;">
-    <div class="project-image" [ngStyle]="{ 'background-image': 'url(https://picsum.photos/400/200?random=' + project.id + ')' }"></div>
-    <h3>
-      {{ project.name }}
-      <span *ngIf="isOwner(project)" class="badge badge-owner" title="You are the owner">👑 Owner</span>
-      <span *ngIf="!isOwner(project)" class="badge badge-member" title="Shared with you">🤝 Member</span>
-    </h3>
-    <div *ngIf="project.owner">Owner: {{ project.owner.username || project.owner.email }}</div>
-    <div class="project-actions">
-      <button class="edit-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); startEditProject(project)">✏️</button>
-      <button class="delete-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); deleteProject(project.id)">🗑️</button>
-      <button class="invite-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); openInviteModal(project)" title="Invite by Email" style="margin-left: 4px;">📧</button>
+    <div *ngIf="userIdWarning" style="color: red; font-weight: bold; margin-bottom: 16px;">
+      {{ userIdWarning }}
     </div>
-  </div>
-  <div class="project-card add-project add-project-hover" (click)="showAddProject = true">
-    <div class="add-project-content">Create new project…</div>
+
+    <div class="project-cards" style="display: flex; flex-wrap: wrap; gap: 16px; min-height: 100px;">
+      <div *ngFor="let project of projects" 
+           class="project-card"
+           [ngClass]="{'owner-card': isOwner(project), 'member-card': !isOwner(project)}"
+           [routerLink]="['/boards', project.id]"
+           style="cursor: pointer; background: #f4f4f4; padding: 16px; border-radius: 8px; min-width: 200px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative;">
+        <div class="project-image" [ngStyle]="{ 'background-image': 'url(https://picsum.photos/400/200?random=' + project.id + ')' }"></div>
+        <h3>
+          {{ project.name }}
+          <span *ngIf="isOwner(project)" class="badge badge-owner" title="You are the owner">👑 Owner</span>
+          <span *ngIf="!isOwner(project)" class="badge badge-member" title="Shared with you">🤝 Member</span>
+        </h3>
+        <div *ngIf="project.owner">Owner: {{ project.owner.username || project.owner.email }}</div>
+        <div class="project-actions">
+          <button class="edit-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); startEditProject(project)">✏️</button>
+          <button class="delete-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); deleteProject(project.id)">🗑️</button>
+          <button class="invite-btn" *ngIf="isOwner(project)" (click)="$event.stopPropagation(); openInviteModal(project)" title="Invite by Email" style="margin-left: 4px;">📧</button>
+        </div>
+      </div>
+      <div class="project-card add-project add-project-hover" (click)="showAddProject = true">
+        <div class="add-project-content">Create new project…</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -68,5 +71,4 @@
     </div>
     <div *ngIf="inviteMessage" style="margin-top: 1em; color: #007bff;">{{ inviteMessage }}</div>
   </div>
-</div>
 </div>
